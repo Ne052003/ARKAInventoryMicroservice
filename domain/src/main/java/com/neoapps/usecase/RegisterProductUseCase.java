@@ -32,7 +32,7 @@ public class RegisterProductUseCase {
         }
 
         Product product = buildProduct(createProductRequest);
-        productRepositoryGateway.createProduct(product);
+        productRepositoryGateway.save(product);
 
     }
 

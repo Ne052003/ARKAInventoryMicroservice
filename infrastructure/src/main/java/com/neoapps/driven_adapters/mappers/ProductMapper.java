@@ -69,6 +69,7 @@ public class ProductMapper {
                 brandEntity,
                 categoryEntity);
 
+        productEntity.setId(product.getId());
         productEntity.setCreationTime(product.getCreationTime());
 
         return productEntity;

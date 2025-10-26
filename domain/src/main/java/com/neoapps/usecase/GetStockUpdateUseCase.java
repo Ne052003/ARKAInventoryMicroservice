@@ -2,7 +2,9 @@ package com.neoapps.usecase;
 
 import com.neoapps.exceptions.DomainException;
 import com.neoapps.model.gateway.ProductRepositoryGateway;
+import com.neoapps.model.gateway.StockTransactionRepositoryGateway;
 import com.neoapps.model.gateway.StockUpdateRepositoryGateway;
+import com.neoapps.model.stockTransaction.StockTransaction;
 import com.neoapps.model.stockUpdate.StockUpdate;
 
 import java.util.List;
@@ -10,10 +12,12 @@ import java.util.List;
 public class GetStockUpdateUseCase {
 
     private final StockUpdateRepositoryGateway stockUpdateRepositoryGateway;
+    private final StockTransactionRepositoryGateway stockTransactionRepository;
     private final ProductRepositoryGateway productRepositoryGateway;
 
-    public GetStockUpdateUseCase(StockUpdateRepositoryGateway stockUpdateRepositoryGateway, ProductRepositoryGateway productRepositoryGateway) {
+    public GetStockUpdateUseCase(StockUpdateRepositoryGateway stockUpdateRepositoryGateway, StockTransactionRepositoryGateway stockTransactionRepository, ProductRepositoryGateway productRepositoryGateway) {
         this.stockUpdateRepositoryGateway = stockUpdateRepositoryGateway;
+        this.stockTransactionRepository = stockTransactionRepository;
         this.productRepositoryGateway = productRepositoryGateway;
     }
 
@@ -30,5 +34,9 @@ public class GetStockUpdateUseCase {
 
     public List<StockUpdate> getAll() {
         return stockUpdateRepositoryGateway.getAll();
+    }
+
+    public List<StockTransaction> getAllTransactions() {
+        return stockTransactionRepository.getAll();
     }
 }

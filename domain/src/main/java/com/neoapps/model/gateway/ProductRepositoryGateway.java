@@ -11,11 +11,9 @@ public interface ProductRepositoryGateway {
 
     boolean existsByName(String name);
 
-    void updateProduct(Product product);
-
     boolean existsById(Long id);
 
     List<Product> getAllProducts();
 
-    void createProduct(Product product);
+    void save(Product product);
 }

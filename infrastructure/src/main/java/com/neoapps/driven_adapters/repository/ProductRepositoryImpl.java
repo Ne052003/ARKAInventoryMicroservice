@@ -34,17 +34,6 @@ public class ProductRepositoryImpl implements ProductRepositoryGateway {
     public boolean existsByName(String name) {
         return productJpaRepository.existsByName(name);
     }
-
-    @Override
-
-    public void updateProduct(Product product) {
-
-        ProductEntity productEntity = productMapper.toProductEntity(product);
-        productEntity.setId(product.getId());
-        productJpaRepository.save(productEntity);
-
-    }
-
     @Override
     public boolean existsById(Long id) {
         return productJpaRepository.existsById(id);
@@ -57,7 +46,7 @@ public class ProductRepositoryImpl implements ProductRepositoryGateway {
     }
 
     @Override
-    public void createProduct(Product product) {
+    public void save(Product product) {
 
         ProductEntity productEntity = productMapper.toProductEntity(product);
 
