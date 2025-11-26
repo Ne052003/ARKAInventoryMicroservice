@@ -14,6 +14,11 @@ public class Category {
         this.creationTime = LocalDateTime.now();
     }
 
+    public Category(Long id) {
+        this.id = id;
+        this.creationTime = LocalDateTime.now();
+    }
+
     public Category() {
     }
 

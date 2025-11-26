@@ -1,10 +1,10 @@
 package com.neoapps.model.gateway;
 
 import com.neoapps.model.stockTransaction.StockTransaction;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface StockTransactionRepositoryGateway {
-    void save(StockTransaction stockTransaction);
-    List<StockTransaction> getAll();
+    Mono<Void> save(StockTransaction stockTransaction);
+    Flux<StockTransaction> getAll();
 }

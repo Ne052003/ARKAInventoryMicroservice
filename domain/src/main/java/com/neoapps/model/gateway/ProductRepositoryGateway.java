@@ -1,19 +1,19 @@
 package com.neoapps.model.gateway;
 
 import com.neoapps.model.product.Product;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Optional;
 
 public interface ProductRepositoryGateway {
 
-    Optional<Product> getProductById(Long id);
+    Mono<Product> getProductById(Long id);
 
-    boolean existsByName(String name);
+    Mono<Boolean> existsByName(String name);
 
-    boolean existsById(Long id);
+    Mono<Boolean> existsById(Long id);
 
-    List<Product> getAllProducts();
+    Flux<Product> getAllProducts();
 
-    void save(Product product);
+    Mono<Void> save(Product product);
 }

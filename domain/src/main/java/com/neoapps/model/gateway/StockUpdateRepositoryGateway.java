@@ -1,14 +1,14 @@
 package com.neoapps.model.gateway;
 
 import com.neoapps.model.stockUpdate.StockUpdate;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface StockUpdateRepositoryGateway {
 
-    void save(StockUpdate stockUpdate);
+    Mono<Void> save(StockUpdate stockUpdate);
 
-    List<StockUpdate> getByProductId(Long productId);
+    Flux<StockUpdate> getByProductId(Long productId);
 
-    List<StockUpdate> getAll();
+    Flux<StockUpdate> getAll();
 }
