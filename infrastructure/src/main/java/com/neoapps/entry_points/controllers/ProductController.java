@@ -1,5 +1,6 @@
 package com.neoapps.entry_points.controllers;
 
+import com.neoapps.exceptions.DomainException;
 import com.neoapps.usecase.UpdateProductStockUseCase;
 import com.neoapps.usecase.dtos.UpdateProductStockRequest;
 import com.neoapps.usecase.GetProductUseCase;
@@ -10,9 +11,8 @@ import com.neoapps.usecase.dtos.UpdateStockByOrderRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api/v1/products")
@@ -24,38 +24,41 @@ public class ProductController {
     private final UpdateProductStockUseCase updateProductStockUseCase;
 
     @PostMapping
-    public ResponseEntity<String> createProduct(@RequestBody CreateProductRequest request) {
+    public Mono<ResponseEntity<String>> createProduct(@RequestBody CreateProductRequest request) {
 
-        registerProductUseCase.createProduct(request);
-        return ResponseEntity.ok("The product " + request.getName() + " was registered successfully");
+        return registerProductUseCase.createProduct(request)
+                .thenReturn(ResponseEntity.ok("The product " + request.getName() + " was registered successfully"))
+                .defaultIfEmpty(ResponseEntity.badRequest().build());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GetProductResponse> getProductById(@PathVariable Long id) {
+    public Mono<ResponseEntity<GetProductResponse>> getProductById(@PathVariable("id") Long id) {
 
-        Optional<GetProductResponse> getProductResponse = getProductUseCase.getProductById(id);
-
-        return getProductResponse.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return getProductUseCase.getProductById(id).map(ResponseEntity::ok).defaultIfEmpty(ResponseEntity.notFound().build());
 
     }
 
     @GetMapping
-    public ResponseEntity<List<GetProductResponse>> getAll() {
-        List<GetProductResponse> productResponseList = getProductUseCase.getAll();
-        return ResponseEntity.ok(productResponseList);
+    public Mono<ResponseEntity<Flux<GetProductResponse>>> getAll() {
+
+        Flux<GetProductResponse> responseFlux = getProductUseCase.getAll();
+
+        return responseFlux.hasElements()
+                .map(hasElements -> hasElements ? ResponseEntity.ok(responseFlux) : ResponseEntity.notFound().build());
     }
 
     @PutMapping("/increaseStockUpdate")
-    public ResponseEntity<String> increaseProductStockByEmployee(@RequestBody UpdateProductStockRequest request) {
-        updateProductStockUseCase.increaseProductStock(request);
-        return ResponseEntity.ok("The product stock was updated successfully");
-
+    public Mono<ResponseEntity<String>> increaseProductStockByEmployee(@RequestBody UpdateProductStockRequest request) {
+        return updateProductStockUseCase.increaseProductStock(request)
+                .thenReturn(ResponseEntity.ok("The product stock was updated successfully"))
+                .onErrorReturn(DomainException.class, ResponseEntity.badRequest().build());
     }
 
     @PutMapping("/reduceStockTransaction")
-    public ResponseEntity<String> reduceProductStockByOrder(@RequestBody UpdateStockByOrderRequest request) {
-        updateProductStockUseCase.reduceProductStockByOrder(request);
-        return ResponseEntity.ok("The product stock was updated successfully for order: " + request.getOrderId());
+    public Mono<ResponseEntity<String>> reduceProductStockByOrder(@RequestBody UpdateStockByOrderRequest request) {
+        return updateProductStockUseCase.reduceProductStockByOrder(request)
+                .thenReturn(ResponseEntity.ok("The product stock was updated successfully for order: " + request.getOrderId()))
+                .onErrorReturn(DomainException.class, ResponseEntity.badRequest().build());
     }
 
 }

@@ -7,8 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api/v1/stockTransactions")
@@ -17,8 +17,11 @@ public class StockTransactionController {
     private final GetStockUpdateUseCase getStockUpdateUseCase;
 
     @GetMapping
-    public ResponseEntity<List<StockTransaction>> getAll() {
-        return ResponseEntity.ok(getStockUpdateUseCase.getAllTransactions());
+    public Mono<ResponseEntity<Flux<StockTransaction>>> getAll() {
+        Flux<StockTransaction> transactionFlux = getStockUpdateUseCase.getAllTransactions();
+
+        return transactionFlux.hasElements()
+                .map(hasElements -> hasElements ? ResponseEntity.ok(transactionFlux) : ResponseEntity.notFound().build());
     }
 
 }
