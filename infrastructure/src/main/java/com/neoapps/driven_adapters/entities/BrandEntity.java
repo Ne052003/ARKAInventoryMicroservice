@@ -1,26 +1,23 @@
 package com.neoapps.driven_adapters.entities;
 
-import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
 
-@Entity
 @Table(name = "brands")
 @Getter
 @Setter
-@NoArgsConstructor
 public class BrandEntity {
     @Id
-    @Column(name = "brand_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column("brand_id")
     private Long id;
 
-    @Column(nullable = false)
     private String name;
 
-    @Column(name = "created_at")
+    @Column("created_at")
     private LocalDateTime creationTime;
 }

@@ -1,56 +1,50 @@
 package com.neoapps.driven_adapters.entities;
 
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "products")
+@Table("products")
 @Getter
 @Setter
 @NoArgsConstructor
 public class ProductEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id")
+    @Column("product_id")
     private Long id;
 
-    @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
     private String description;
 
-    @Column(nullable = false)
     private Integer stock;
 
-    @Column(name = "retail_price", nullable = false)
+    @Column("retail_price")
     private BigDecimal retailPrice;
 
-    @Column(name = "wholesale_price", nullable = false)
+    @Column("wholesale_price")
     private BigDecimal wholesalePrice;
 
-    @Column(name = "is_active", nullable = false)
+    @Column("is_active")
     private boolean isActive;
 
-    @Column(name = "created_at", updatable = false)
+    @Column("created_at")
     private LocalDateTime creationTime;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "supplier_id", nullable = false)
-    private SupplierEntity supplier;
+    @Column("supplier_id")
+    private Long supplierId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "brand_id", nullable = false)
-    private BrandEntity brand;
+    @Column("brand_id")
+    private Long brandId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "category_id", nullable = false)
-    private CategoryEntity category;
+    @Column("category_id")
+    private Long categoryId;
 
     public ProductEntity(String name,
                          String description,
@@ -58,17 +52,17 @@ public class ProductEntity {
                          BigDecimal retailPrice,
                          BigDecimal wholesalePrice,
                          boolean isActive,
-                         SupplierEntity supplier,
-                         BrandEntity brand,
-                         CategoryEntity category) {
+                         Long supplierId,
+                         Long brandId,
+                         Long categoryId) {
         this.name = name;
         this.description = description;
         this.stock = stock;
         this.retailPrice = retailPrice;
         this.wholesalePrice = wholesalePrice;
         this.isActive = isActive;
-        this.supplier = supplier;
-        this.brand = brand;
-        this.category = category;
+        this.supplierId = supplierId;
+        this.brandId = brandId;
+        this.categoryId = categoryId;
     }
 }

@@ -1,14 +1,15 @@
 package com.neoapps.driven_adapters.entities;
 
 import com.neoapps.model.stockUpdate.TransactionType;
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
 
-@Entity
 @Table(name = "stock_updates")
 @Getter
 @Setter
@@ -16,24 +17,20 @@ import java.time.LocalDateTime;
 public class StockUpdateEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "stock_update_id")
+    @Column("stock_update_id")
     private Long id;
 
-    @Column(name = "employee_id", nullable = false)
+    @Column( "employee_id")
     private Long employeeId;
 
-    @Column(name = "product_id", nullable = false)
+    @Column("product_id")
     private Long productId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "update_type", nullable = false)
+    @Column("update_type")
     private TransactionType updateType;
 
-    @Column(nullable = false)
     private LocalDateTime date;
 
-    @Column(nullable = false)
     private Integer quantity;
 
     public StockUpdateEntity(Long employeeId, Long product, TransactionType updateType, LocalDateTime date, Integer quantity) {
