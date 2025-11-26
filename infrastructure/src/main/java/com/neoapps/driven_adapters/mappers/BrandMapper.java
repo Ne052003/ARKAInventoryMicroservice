@@ -22,11 +22,16 @@ public class BrandMapper {
     }
 
     public BrandEntity toBrandEntity(Brand brand) {
+
         if (brand == null) {
             return null;
         }
+
         BrandEntity brandEntity = new BrandEntity();
+
         brandEntity.setId(brand.getId());
+        brandEntity.setName(brand.getName());
+        brandEntity.setCreationTime(brand.getCreationTime());
 
         return brandEntity;
     }

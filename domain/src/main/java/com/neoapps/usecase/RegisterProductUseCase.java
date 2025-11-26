@@ -7,6 +7,7 @@ import com.neoapps.model.gateway.ProductRepositoryGateway;
 import com.neoapps.model.product.Product;
 import com.neoapps.model.supplier.Supplier;
 import com.neoapps.usecase.dtos.CreateProductRequest;
+import reactor.core.publisher.Mono;
 
 public class RegisterProductUseCase {
 
@@ -16,7 +17,7 @@ public class RegisterProductUseCase {
         this.productRepositoryGateway = productRepositoryGateway;
     }
 
-    public void createProduct(CreateProductRequest createProductRequest) {
+    public Mono<Void> createProduct(CreateProductRequest createProductRequest) {
 
         if (createProductRequest == null) {
             throw new DomainException("CreateProductRequest can't be null", "CreateProductRequest");
@@ -26,25 +27,16 @@ public class RegisterProductUseCase {
             throw new DomainException("Wholesale price can't be higher or equal to retail price", "WholesalePrice");
         }
 
-        boolean productAlreadyExist = productRepositoryGateway.existsByName(createProductRequest.getName());
-        if (productAlreadyExist) {
-            throw new DomainException("A product named: '" + createProductRequest.getName() + "' already exists", "ProductName");
-        }
-
-        Product product = buildProduct(createProductRequest);
-        productRepositoryGateway.save(product);
-
+        return productRepositoryGateway.existsByName(createProductRequest.getName())
+                .flatMap(exists -> exists ? Mono.error(new DomainException("A product named: '" + createProductRequest.getName() + "' already exists", "ProductName")) : Mono.empty())
+                .then(productRepositoryGateway.save(buildProduct(createProductRequest)));
     }
 
     private Product buildProduct(CreateProductRequest createProductRequest) {
-        Supplier supplier = new Supplier();
-        supplier.setId(createProductRequest.getSupplierId());
 
-        Brand brand = new Brand();
-        brand.setId(createProductRequest.getBrandId());
-
-        Category category = new Category();
-        category.setId(createProductRequest.getCategoryId());
+        Supplier supplier = new Supplier(createProductRequest.getSupplierId());
+        Brand brand = new Brand(createProductRequest.getBrandId());
+        Category category = new Category(createProductRequest.getCategoryId());
 
         return new Product(
                 createProductRequest.getName(),

@@ -1,9 +1,6 @@
 package com.neoapps.driven_adapters.mappers;
 
-import com.neoapps.driven_adapters.entities.BrandEntity;
-import com.neoapps.driven_adapters.entities.CategoryEntity;
 import com.neoapps.driven_adapters.entities.ProductEntity;
-import com.neoapps.driven_adapters.entities.SupplierEntity;
 import com.neoapps.model.brand.Brand;
 import com.neoapps.model.category.Category;
 import com.neoapps.model.product.Product;
@@ -15,21 +12,17 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ProductMapper {
 
-    private final SupplierMapper supplierMapper;
-    private final CategoryMapper categoryMapper;
-    private final BrandMapper brandMapper;
-
     public Product toProduct(ProductEntity productEntity) {
 
         if (productEntity == null) {
             return null;
         }
 
-        Supplier supplier = supplierMapper.toSupplier(productEntity.getSupplier());
+        Supplier supplier = new Supplier(productEntity.getSupplierId());
 
-        Brand brand = brandMapper.toBrand(productEntity.getBrand());
+        Brand brand = new Brand(productEntity.getBrandId());
 
-        Category category = categoryMapper.toCategory(productEntity.getCategory());
+        Category category = new Category(productEntity.getCategoryId());
 
         Product product = new Product(productEntity.getName(),
                 productEntity.getDescription(),
@@ -52,22 +45,15 @@ public class ProductMapper {
             return null;
         }
 
-        SupplierEntity supplierEntity = supplierMapper.toSupplierEntity(product.getSupplier());
-
-        BrandEntity brandEntity = brandMapper.toBrandEntity(product.getBrand());
-
-        CategoryEntity categoryEntity = categoryMapper.toCategoryEntity(product.getCategory());
-
-
         ProductEntity productEntity = new ProductEntity(product.getName(),
                 product.getDescription(),
                 product.getStock(),
                 product.getRetailPrice(),
                 product.getWholeSalePrice(),
                 product.isActive(),
-                supplierEntity,
-                brandEntity,
-                categoryEntity);
+                product.getSupplier().getId(),
+                product.getBrand().getId(),
+                product.getCategory().getId());
 
         productEntity.setId(product.getId());
         productEntity.setCreationTime(product.getCreationTime());

@@ -22,8 +22,16 @@ public class CategoryMapper {
     }
 
     public CategoryEntity toCategoryEntity(Category category) {
+
+        if (category == null) {
+            return null;
+        }
+
         CategoryEntity categoryEntity = new CategoryEntity();
         categoryEntity.setId(category.getId());
+        categoryEntity.setName(category.getName());
+        categoryEntity.setDescription(category.getDescription());
+        categoryEntity.setCreationTime(category.getCreationTime());
 
         return categoryEntity;
     }

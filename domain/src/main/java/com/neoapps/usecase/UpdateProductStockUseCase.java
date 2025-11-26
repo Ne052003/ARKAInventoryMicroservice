@@ -4,12 +4,12 @@ import com.neoapps.exceptions.DomainException;
 import com.neoapps.model.gateway.ProductRepositoryGateway;
 import com.neoapps.model.gateway.StockTransactionRepositoryGateway;
 import com.neoapps.model.gateway.StockUpdateRepositoryGateway;
-import com.neoapps.model.product.Product;
 import com.neoapps.model.stockTransaction.StockTransaction;
 import com.neoapps.model.stockUpdate.StockUpdate;
 import com.neoapps.model.stockUpdate.TransactionType;
 import com.neoapps.usecase.dtos.UpdateProductStockRequest;
 import com.neoapps.usecase.dtos.UpdateStockByOrderRequest;
+import reactor.core.publisher.Mono;
 
 public class UpdateProductStockUseCase {
 
@@ -23,48 +23,50 @@ public class UpdateProductStockUseCase {
         this.stockTransactionRepository = stockTransactionRepository;
     }
 
-    public void increaseProductStock(UpdateProductStockRequest request) {
+    public Mono<Void> increaseProductStock(UpdateProductStockRequest request) {
 
-        validateUpdateProductStockRequest(request);
 
-        Product product = productRepository.getProductById(request.getProductId())
-                .orElseThrow(() -> new DomainException("A product with id " + request.getProductId() + " does not exist", "ProductId"));
+        return validateUpdateProductStockRequest(request)
+                .then(productRepository.getProductById(request.getProductId())
+                        .switchIfEmpty(Mono.error(new DomainException("A product with id " + request.getProductId() + " does not exist", "ProductId")))
+                        .flatMap(product -> {
+                            StockUpdate stockUpdate = new StockUpdate(request.getEmployeeId(), request.getProductId(), TransactionType.INPUT, request.getQuantity());
 
-        StockUpdate stockUpdate = new StockUpdate(request.getEmployeeId(), request.getProductId(), TransactionType.INPUT, request.getQuantity());
+                            Integer newStock = product.getStock() + request.getQuantity();
+                            product.setStock(newStock);
 
-        Integer newStock = product.getStock() + request.getQuantity();
-
-        product.setStock(newStock);
-        productRepository.save(product);
-        stockUpdateRepository.save(stockUpdate);
-
+                            return productRepository.save(product).then(stockUpdateRepository.save(stockUpdate));
+                        }));
     }
 
-    private void validateUpdateProductStockRequest(UpdateProductStockRequest request) {
+    private Mono<Void> validateUpdateProductStockRequest(UpdateProductStockRequest request) {
         if (request == null) {
-            throw new DomainException("Request can't be null", "UpdateStockProductRequest");
+            return Mono.error(new DomainException("Request can't be null", "UpdateStockProductRequest"));
         }
 
         if (request.getQuantity() <= 0) {
-            throw new DomainException("Stock can't be equal or less than 0", "UpdateProductStockRequest");
+            return Mono.error(new DomainException("Stock can't be equal or less than 0", "UpdateProductStockRequest"));
         }
+
+        return Mono.empty();
     }
 
-    public void reduceProductStockByOrder(UpdateStockByOrderRequest request) {
+    public Mono<Void> reduceProductStockByOrder(UpdateStockByOrderRequest request) {
+
         if (request == null) {
-            throw new DomainException("Request can't be null", "UpdateStockByOrderRequest");
+            return Mono.error(new DomainException("Request can't be null", "UpdateStockByOrderRequest"));
         }
 
-        Product product = productRepository.getProductById(request.getProductId())
-                .orElseThrow(() -> new DomainException("A product with id " + request.getProductId() + " does not exist", "ProductId"));
+        return productRepository.getProductById(request.getProductId())
+                .switchIfEmpty(Mono.error(new DomainException("A product with id " + request.getProductId() + " does not exist", "ProductId")))
+                .flatMap(product -> {
+                    StockTransaction stockTransaction = new StockTransaction(request.getOrderId(), request.getProductId(), TransactionType.OUTPUT, request.getQuantity(), request.getTimeStamp());
 
-        StockTransaction stockTransaction = new StockTransaction(request.getOrderId(), request.getProductId(), TransactionType.OUTPUT, request.getQuantity(), request.getTimeStamp());
+                    Integer newStock = product.getStock() - request.getQuantity();
 
-        Integer newStock = product.getStock() - request.getQuantity();
+                    product.setStock(newStock);
 
-        product.setStock(newStock);
-        productRepository.save(product);
-        stockTransactionRepository.save(stockTransaction);
-
+                    return productRepository.save(product).then(stockTransactionRepository.save(stockTransaction));
+                });
     }
 }
