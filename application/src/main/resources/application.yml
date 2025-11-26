@@ -1,15 +1,10 @@
 spring:
+
   application:
     name: inventoryService
 
-  datasource:
-    url:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username:
-    password:
+  profiles:
+    active: prod
 
-  jpa:
-    hibernate:
-      ddl-auto: update
-    database-platform: org.hibernate.dialect.MySQL8Dialect
-    show-sql: true
+server:
+  port: 8088

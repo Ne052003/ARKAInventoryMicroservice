@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '3.5.5'
+    id 'java-library'
 }
 
 configurations {
@@ -10,21 +10,10 @@ configurations {
 
 dependencies {
 
-    implementation project(':domain')
+    api project(':domain')
 
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-
+    api 'org.springframework.data:spring-data-r2dbc'
     annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-}
+    implementation 'org.springframework.boot:spring-boot-actuator'
 
-test {
-    useJUnitPlatform()
-}
-
-bootJar {
-    enabled = false
 }
