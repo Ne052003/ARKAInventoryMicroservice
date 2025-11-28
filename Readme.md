@@ -2,15 +2,15 @@
 
 ## Description
 
-Inventory Service is an API for ARKA Business developed with **Spring Boot** to handle requests to create, search, update products and
-allows to track updates on the product stock.
+Inventory Service is a non-blocking API for ARKA business developed with **Spring Boot** to handle requests to create, search, update products and
+allows to track updates on the product stock, whether it was due to a new order or by a manual modification from internal staff.
 
 ## 🚀 Technologies Used
 
 - Java 21
 - Spring Boot 3.5.5
-- Spring Web
-- Hibernate (JPA)
+- Spring Webflux
+- Spring R2DBC
 - MySQL
 - Lombok
 
@@ -28,24 +28,21 @@ cd InventoryMicroservice
 ```
 
 ### 2️⃣ Configure the Database
-Set the database connection properties:
+Set the database connection properties or create a .env file with the environment variables and install spring-dotenv:
 
 ```properties
-    url: jdbc:mysql://localhost:3306/database_name
-    username:
-    password:
+    url: r2dbc:mysql://${DB_HOST}:3306/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 ```
 
 ### 3️⃣ Run the Application
 ```sh
 ./gradlew bootRun
-```
+
+## Without spring-dotenv
+./gradlew bootRun --args='--DB_HOST=**** --DB_NAME=**** --DB_USERNAME=**** --DB_PASSWORD=****'
 
 ## 🔧 Future Improvements
 
-✅ Reactive behavior to domain events in OrderService microservice to
-update product stock and track stock transactions.
-
 ✅ Implementation of NotificationService to notify when a product is running out of stock.
-
-✅ Define observable behavior to create reports of products that need to be supplied in ReportService.
