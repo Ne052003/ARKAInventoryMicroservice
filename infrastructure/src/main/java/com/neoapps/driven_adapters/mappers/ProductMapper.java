@@ -1,10 +1,7 @@
 package com.neoapps.driven_adapters.mappers;
 
 import com.neoapps.driven_adapters.entities.ProductEntity;
-import com.neoapps.model.brand.Brand;
-import com.neoapps.model.category.Category;
 import com.neoapps.model.product.Product;
-import com.neoapps.model.supplier.Supplier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -18,21 +15,16 @@ public class ProductMapper {
             return null;
         }
 
-        Supplier supplier = new Supplier(productEntity.getSupplierId());
-
-        Brand brand = new Brand(productEntity.getBrandId());
-
-        Category category = new Category(productEntity.getCategoryId());
-
         Product product = new Product(productEntity.getName(),
                 productEntity.getDescription(),
                 productEntity.getStock(),
                 productEntity.getRetailPrice().doubleValue(),
                 productEntity.getWholesalePrice().doubleValue(),
                 productEntity.isActive(),
-                supplier,
-                brand,
-                category);
+                productEntity.getSupplierId(),
+                productEntity.getBrandId(),
+                productEntity.getCategoryId());
+
         product.setId(productEntity.getId());
         product.setCreationTime(productEntity.getCreationTime());
 
@@ -51,9 +43,9 @@ public class ProductMapper {
                 product.getRetailPrice(),
                 product.getWholeSalePrice(),
                 product.isActive(),
-                product.getSupplier().getId(),
-                product.getBrand().getId(),
-                product.getCategory().getId());
+                product.getSupplierId(),
+                product.getBrandId(),
+                product.getCategoryId());
 
         productEntity.setId(product.getId());
         productEntity.setCreationTime(product.getCreationTime());
