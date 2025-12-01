@@ -3,7 +3,7 @@ package com.neoapps.usecase.dtos;
 public class UpdateProductStockRequest {
     private Long productId;
     private Long employeeId;
-    private Integer quantity;
+    private Integer stock;
 
     public UpdateProductStockRequest() {
     }
@@ -24,11 +24,11 @@ public class UpdateProductStockRequest {
         this.employeeId = employeeId;
     }
 
-    public Integer getQuantity() {
-        return quantity;
+    public Integer getStock() {
+        return stock;
     }
 
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
+    public void setStock(Integer stock) {
+        this.stock = stock;
     }
 }

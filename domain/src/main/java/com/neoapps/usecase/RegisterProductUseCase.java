@@ -1,6 +1,7 @@
 package com.neoapps.usecase;
 
 import com.neoapps.exceptions.DomainException;
+import com.neoapps.exceptions.ProductAlreadyExistsException;
 import com.neoapps.model.gateway.ProductRepositoryGateway;
 import com.neoapps.model.product.Product;
 import com.neoapps.usecase.dtos.CreateProductRequest;
@@ -16,10 +17,6 @@ public class RegisterProductUseCase {
 
     public Mono<Void> createProduct(CreateProductRequest createProductRequest) {
 
-        if (createProductRequest == null) {
-            throw new DomainException("CreateProductRequest can't be null", "CreateProductRequest");
-        }
-
         if (createProductRequest.getWholesalePrice() >= createProductRequest.getRetailPrice()) {
             throw new DomainException("Wholesale price can't be higher or equal to retail price", "WholesalePrice");
         }
@@ -27,15 +24,16 @@ public class RegisterProductUseCase {
         return productRepositoryGateway.existsByName(createProductRequest.getName())
                 .doOnNext(exists -> {
                     if (exists) {
-                        throw new DomainException("A product named: '" + createProductRequest.getName() + "' already exists", "ProductName");
+                        throw new ProductAlreadyExistsException(createProductRequest.getName() + "' already exists");
                     }
                 })
-                .then(productRepositoryGateway.save(buildProduct(createProductRequest)));
+                .then(buildProduct(createProductRequest)
+                        .flatMap(productRepositoryGateway::save));
     }
 
-    private Product buildProduct(CreateProductRequest createProductRequest) {
+    private Mono<Product> buildProduct(CreateProductRequest createProductRequest) {
 
-        return new Product(
+        return Mono.fromCallable(() -> new Product(
                 createProductRequest.getName(),
                 createProductRequest.getDescription(),
                 createProductRequest.getStock(),
@@ -44,6 +42,6 @@ public class RegisterProductUseCase {
                 createProductRequest.isActive(),
                 createProductRequest.getSupplierId(),
                 createProductRequest.getBrandId(),
-                createProductRequest.getCategoryId());
+                createProductRequest.getCategoryId()));
     }
 }

@@ -1,6 +1,7 @@
 package com.neoapps.usecase;
 
 import com.neoapps.exceptions.DomainException;
+import com.neoapps.exceptions.ProductNotFoundException;
 import com.neoapps.model.gateway.ProductRepositoryGateway;
 import com.neoapps.model.gateway.StockTransactionRepositoryGateway;
 import com.neoapps.model.gateway.StockUpdateRepositoryGateway;
@@ -26,29 +27,16 @@ public class UpdateProductStockUseCase {
     public Mono<Void> increaseProductStock(UpdateProductStockRequest request) {
 
 
-        return validateUpdateProductStockRequest(request)
-                .then(productRepository.getProductById(request.getProductId())
-                        .switchIfEmpty(Mono.error(new DomainException("A product with id " + request.getProductId() + " does not exist", "ProductId")))
-                        .flatMap(product -> {
-                            StockUpdate stockUpdate = new StockUpdate(request.getEmployeeId(), request.getProductId(), TransactionType.INPUT, request.getQuantity());
+        return productRepository.getProductById(request.getProductId())
+                .switchIfEmpty(Mono.error(new ProductNotFoundException(request.getProductId())))
+                .flatMap(product -> {
+                    StockUpdate stockUpdate = new StockUpdate(request.getEmployeeId(), request.getProductId(), TransactionType.INPUT, request.getStock());
 
-                            Integer newStock = product.getStock() + request.getQuantity();
-                            product.setStock(newStock);
+                    Integer newStock = product.getStock() + request.getStock();
+                    product.setStock(newStock);
 
-                            return productRepository.save(product).then(stockUpdateRepository.save(stockUpdate));
-                        }));
-    }
-
-    private Mono<Void> validateUpdateProductStockRequest(UpdateProductStockRequest request) {
-        if (request == null) {
-            return Mono.error(new DomainException("Request can't be null", "UpdateStockProductRequest"));
-        }
-
-        if (request.getQuantity() <= 0) {
-            return Mono.error(new DomainException("Stock can't be equal or less than 0", "UpdateProductStockRequest"));
-        }
-
-        return Mono.empty();
+                    return productRepository.save(product).then(stockUpdateRepository.save(stockUpdate));
+                });
     }
 
     public Mono<Void> reduceProductStockByOrder(UpdateStockByOrderRequest request) {
@@ -58,7 +46,7 @@ public class UpdateProductStockUseCase {
         }
 
         return productRepository.getProductById(request.getProductId())
-                .switchIfEmpty(Mono.error(new DomainException("A product with id " + request.getProductId() + " does not exist", "ProductId")))
+                .switchIfEmpty(Mono.error(new ProductNotFoundException(request.getProductId())))
                 .flatMap(product -> {
                     StockTransaction stockTransaction = new StockTransaction(request.getOrderId(), request.getProductId(), TransactionType.OUTPUT, request.getQuantity(), request.getTimeStamp());
 
