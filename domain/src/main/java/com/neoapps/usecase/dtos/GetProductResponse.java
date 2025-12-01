@@ -2,6 +2,7 @@ package com.neoapps.usecase.dtos;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class GetProductResponse {
 
@@ -97,5 +98,16 @@ public class GetProductResponse {
 
     public void setCreationTime(LocalDateTime creationTime) {
         this.creationTime = creationTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof GetProductResponse that)) return false;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
     }
 }

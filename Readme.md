@@ -18,6 +18,7 @@ allows to track updates on the product stock, whether it was due to a new order 
 
 - Clean architecture
 - Domain Driven Design
+- Reactive operations
 - Rest Controller
 
 ## 📦 Installation and Configuration

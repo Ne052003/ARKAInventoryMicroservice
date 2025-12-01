@@ -1,9 +1,5 @@
 package com.neoapps.model.product;
 
-import com.neoapps.model.brand.Brand;
-import com.neoapps.model.category.Category;
-import com.neoapps.model.supplier.Supplier;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -16,9 +12,9 @@ public class Product {
     private WholeSalePrice wholeSalePrice;
     private boolean isActive;
     private LocalDateTime creationTime;
-    private Supplier supplier;
-    private Brand brand;
-    private Category category;
+    private Long supplierId;
+    private Long brandId;
+    private Long categoryId;
 
     public Product(
             String name,
@@ -27,9 +23,9 @@ public class Product {
             Double retailPrice,
             Double wholeSalePrice,
             boolean isActive,
-            Supplier supplier,
-            Brand brand,
-            Category category) {
+            Long supplierId,
+            Long brandId,
+            Long categoryId) {
         this.name = new ProductName(name);
         this.productDescription = new ProductDescription(description);
         this.stock = new Stock(stock);
@@ -37,9 +33,9 @@ public class Product {
         this.wholeSalePrice = new WholeSalePrice(wholeSalePrice);
         this.isActive = isActive;
         this.creationTime = LocalDateTime.now();
-        this.supplier = supplier;
-        this.brand = brand;
-        this.category = category;
+        this.supplierId = supplierId;
+        this.brandId = brandId;
+        this.categoryId = categoryId;
         this.creationTime = LocalDateTime.now();
     }
 
@@ -111,28 +107,28 @@ public class Product {
         this.creationTime = creationTime;
     }
 
-    public Supplier getSupplier() {
-        return this.supplier;
+    public Long getSupplierId() {
+        return this.supplierId;
     }
 
-    public void setSupplierId(Supplier supplier) {
-        this.supplier = supplier;
+    public void setSupplierId(Long supplier) {
+        this.supplierId = supplier;
     }
 
-    public Brand getBrand() {
-        return this.brand;
+    public Long getBrandId() {
+        return this.brandId;
     }
 
-    public void setBrandId(Brand brand) {
-        this.brand = brand;
+    public void setBrandId(Long brand) {
+        this.brandId = brand;
     }
 
-    public Category getCategory() {
-        return this.category;
+    public Long getCategoryId() {
+        return this.categoryId;
     }
 
-    public void setCategoryId(Category category) {
-        this.category = category;
+    public void setCategoryId(Long category) {
+        this.categoryId = category;
     }
 }
 

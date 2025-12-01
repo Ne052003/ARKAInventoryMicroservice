@@ -14,10 +14,6 @@ public class Supplier {
         this.creationTime = LocalDateTime.now();
     }
 
-    public Supplier(Long id) {
-        this.id = id;
-    }
-
     public Supplier() {
     }
 

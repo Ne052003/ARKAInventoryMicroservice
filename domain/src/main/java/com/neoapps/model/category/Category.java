@@ -8,14 +8,9 @@ public class Category {
     private CategoryDescription description;
     private LocalDateTime creationTime;
 
-    public Category(String name, CategoryDescription description) {
+    public Category(String name, String description) {
         this.name = new CategoryName(name);
-        this.description = description;
-        this.creationTime = LocalDateTime.now();
-    }
-
-    public Category(Long id) {
-        this.id = id;
+        this.description = new CategoryDescription(description);
         this.creationTime = LocalDateTime.now();
     }
 

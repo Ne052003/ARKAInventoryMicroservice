@@ -13,10 +13,6 @@ public class Brand {
         this.creationTime = LocalDateTime.now();
     }
 
-    public Brand(Long id) {
-        this.id = id;
-    }
-
     public Brand() {
     }
 
