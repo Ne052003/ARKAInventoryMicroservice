@@ -4,4 +4,8 @@ plugins {
 dependencies {
     api 'org.springframework:spring-webflux'
     api('org.slf4j:slf4j-api:2.0.9')
+
+    testImplementation 'org.mockito:mockito-junit-jupiter'
+    testImplementation 'org.mockito:mockito-core'
+    testImplementation 'io.projectreactor:reactor-test'
 }

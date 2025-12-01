@@ -18,6 +18,11 @@ subprojects {
         }
     }
 
+    dependencies {
+        testImplementation 'org.junit.jupiter:junit-jupiter'
+        testImplementation 'org.junit.platform:junit-platform-launcher'
+    }
+
     java {
         sourceCompatibility = '21'
     }
